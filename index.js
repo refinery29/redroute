@@ -1,5 +1,4 @@
-let
-    redis_host = process.env.REDIS_HOST,
+let redis_host = process.env.REDIS_HOST,
     redis_port = process.env.REDIS_PORT || 6379,
     redis = require('redis'),
     redis_client = redis.createClient({
@@ -21,7 +20,7 @@ let
                         }
                     });
                 }
-            }),
+            });
         },
         "hdel": (key, field) => {
             redis_client.hdel(key, field, (err) => {
@@ -33,18 +32,17 @@ let
                         if (err) {
                             throw err;
                         } else if (value != nil) {
-                            throw new
+                            throw new Error("Key failed to delete");
                         } else {
                             console.log("HDEL " + key + " " + field);
                         }
                     });
                 }
-            })
-        },
-    }
+            });
+        }
+    };
 
-
-exports.handler = async function(event, context) {
+exports.handler = async function (event, context) {
     for (i=0; i < event.Records.length; i++) {
         let record = event.Records[i],
             body = JSON.parse(record.body),
@@ -53,10 +51,10 @@ exports.handler = async function(event, context) {
             field = body.field;
             value = body.value;
 
-        console.log("command: " + command
-                + "\nkey: " + key
-                + "\nfield: " + field
-                + "\ndata: " + data);
+        console.log("command: " + command +
+                  "\nkey: " + key +
+                  "\nfield: " + field +
+                  "\nvalue: " + value);
 
         try {
             // Call delegator function which can handle these early redis commands which share argument order.
@@ -73,5 +71,5 @@ exports.handler = async function(event, context) {
 
         // Ack for record would go here on fifo.
     }
-    return context.logStreamName
+    return context.logStreamName;
 };
