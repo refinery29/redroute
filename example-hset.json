@@ -1,0 +1,4 @@
+{"command": "hset",
+ "key": "some-key",
+ "field": "some-field",
+ "value": "some-value"}
