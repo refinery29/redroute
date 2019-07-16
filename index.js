@@ -45,6 +45,7 @@ const commands = {
 exports.handler = async(event, context) => {
   for (i = 0; i < event.Records.length; i++) {
     const record = event.Records[i];
+    console.log(record);
     const body = JSON.parse(record.body);
     const command = body.command;
     const key = body.key;
