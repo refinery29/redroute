@@ -1,5 +1,7 @@
 #!/bin/sh
+set -e
 npm ci
+eslint .
 enumerate_package_dependencies () {
     for package in $(jq -r '.dependencies|keys[]' node_modules/$1/package.json 2>/dev/null)
     do
