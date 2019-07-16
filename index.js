@@ -43,12 +43,13 @@ const commands = {
 };
 
 exports.handler = async(event, context) => {
+  console.log(event.Records);
   for (i = 0; i < event.Records.length; i++) {
-    const record = event.Records[i];
-    const command = record;
-    const key = record.key;
-    const field = record.field;
-    const value = record.value;
+    const body = JSON.parse(event.Records[i].body);
+    const command = body.command;
+    const key = body.key;
+    const field = body.field;
+    const value = body.value;
 
     console.log('command: ' + command +
                   '\nkey: ' + key +
