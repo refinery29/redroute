@@ -1,6 +1,8 @@
 const redisHost = process.env.REDIS_HOST;
 const redisPort = process.env.REDIS_PORT || 6379;
 const redis = require('redis');
+
+let redisClient;
 const commands = {
   'hset': (key, field, value) => {
     redisClient.hset(key, field, value, (err) => {
@@ -40,7 +42,7 @@ const commands = {
 
 exports.handler = async(event, context) => {
   console.log(event.Records);
-  const redisClient = redis.createClient({
+  redisClient = redis.createClient({
     host: redisHost,
     port: redisPort
   });
