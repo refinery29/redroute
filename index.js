@@ -74,6 +74,10 @@ exports.handler = async(event, context) => {
     }
 
     // Ack for record would go here on fifo.
+    console.log('finished with ' + command +
+                ' ' + key +
+                ' ' + field +
+                ' ' + value);
   }
   return context.logStreamName;
 };
