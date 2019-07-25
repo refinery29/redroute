@@ -71,8 +71,6 @@ exports.handler = async(event, context) => {
       } else {
         console.log('Unknown error: ' + err.message);
       }
-      // Continue processing records even when one produces an error so we do not lose any.
-      continue;
     }
 
     // Ack for record would go here on fifo.
