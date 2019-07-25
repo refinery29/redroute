@@ -2,7 +2,7 @@ const redisHost = process.env.REDIS_HOST;
 const redisPort = process.env.REDIS_PORT || 6379;
 const redis = require('redis');
 
-exports.handler = (event, context) => {
+exports.handler = (event, context, callback) => {
   const redisClient = redis.createClient({
     host: redisHost,
     port: redisPort
@@ -79,5 +79,7 @@ exports.handler = (event, context) => {
                 ' ' + field +
                 ' ' + value);
   }
-  return context.logStreamName;
+
+  // Signal completion of function execution.
+  return callback();
 };
