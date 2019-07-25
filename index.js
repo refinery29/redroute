@@ -31,7 +31,7 @@ const commands = {
         redisClient.hget(key, field, (err, value) => {
           if (err) {
             throw err;
-          } else if (value !== nil) {
+          } else if (value !== 'nil') {
             throw new Error('Key failed to delete');
           } else {
             console.log('HDEL ' + key + ' ' + field);
