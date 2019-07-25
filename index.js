@@ -1,10 +1,6 @@
 const redisHost = process.env.REDIS_HOST;
 const redisPort = process.env.REDIS_PORT || 6379;
 const redis = require('redis');
-const redisClient = redis.createClient({
-  host: redisHost,
-  port: redisPort
-});
 const commands = {
   'hset': (key, field, value) => {
     redisClient.hset(key, field, value, (err) => {
@@ -44,6 +40,14 @@ const commands = {
 
 exports.handler = async(event, context) => {
   console.log(event.Records);
+  const redisClient = redis.createClient({
+    host: redisHost,
+    port: redisPort
+  });
+  redisClient.on('error', (err) => {
+    console.log('Redis Client Error: ' + err);
+  });
+
   for (i = 0; i < event.Records.length; i++) {
     const body = JSON.parse(event.Records[i].body);
     const command = body.command;
