@@ -81,5 +81,5 @@ exports.handler = (event, context, callback) => {
   }
 
   // Signal completion of function execution.
-  return callback();
+  callback(null, 'Success');
 };
