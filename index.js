@@ -34,8 +34,8 @@ exports.handler = (event, context, callback) => {
           redisClient.hget(key, field, (err, value) => {
             if (err) {
               throw err;
-            } else if (value !== 'nil') {
-              throw new Error('Key failed to delete');
+            } else if (value !== null) {
+              throw new Error('Key failed to delete, value was ' + value);
             } else {
               console.log('HDEL ' + key + ' ' + field);
             }
