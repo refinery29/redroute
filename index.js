@@ -12,14 +12,14 @@ exports.handler = (event, context, callback) => {
     'hset': (key, field, value) => {
       redisClient.hset(key, field, value, (err) => {
         if (err) {
-          throw err;
+          callback(Error(err));
         } else {
           // Query for new key to confirm its creation, we may not need this
           redisClient.hget(key, field, (err, value) => {
             if (err) {
-              throw err;
+              callback(Error(err));
             } else {
-              console.log('HSET ' + key + ' ' + field + ' ' + value);
+              callback(null, 'HSET ' + key + ' ' + field + ' ' + value);
             }
           });
         }
@@ -28,16 +28,16 @@ exports.handler = (event, context, callback) => {
     'hdel': (key, field) => {
       redisClient.hdel(key, field, (err) => {
         if (err) {
-          throw err;
+          callback(Error(err));
         } else {
           // Query for deleted key to confirm its deletion, we may not need this
           redisClient.hget(key, field, (err, value) => {
             if (err) {
-              throw err;
+              callback(Error(err));
             } else if (value !== null) {
-              throw new Error('Key failed to delete, value was ' + value);
+              callback(Error('Key failed to delete, value was ' + value));
             } else {
-              console.log('HDEL ' + key + ' ' + field);
+              callback(null, 'HDEL ' + key + ' ' + field);
             }
           });
         }
@@ -47,10 +47,10 @@ exports.handler = (event, context, callback) => {
 
   console.log('Processing ' + event.Records.length + ' records');
   redisClient.on('error', (err) => {
-    console.log('Redis Client Error: ' + err);
+    callback(Error(err));
   });
 
-  for (i = 0; i < event.Records.length; i++) {
+  for (var i = 0; i < event.Records.length; i++) {
     const body = JSON.parse(event.Records[i].body);
     const command = body.command;
     const key = body.key;
@@ -67,9 +67,9 @@ exports.handler = (event, context, callback) => {
       commands[command](key, field, value);
     } catch (err) {
       if (err instanceof TypeError) {
-        console.log('Command ' + command + ' not yet implemented');
+        callback(Error('Command ' + command + ' not yet implemented'));
       } else {
-        console.log('Unknown error: ' + err.message);
+        callback(Error('Unknown error: ' + err.message));
       }
     }
 
@@ -79,7 +79,4 @@ exports.handler = (event, context, callback) => {
                 ' ' + field +
                 ' ' + value);
   }
-
-  // Signal completion of function execution.
-  callback(null, 'Success');
 };
