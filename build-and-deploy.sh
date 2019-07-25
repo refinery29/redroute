@@ -16,4 +16,4 @@ do
     zip -r lambda-function-package.zip node_modules/$package
 done
 
-aws lambda update-function-code --function-name redroute --zip-file fileb://lambda-function-package.zip
+aws lambda update-function-code --function-name redroute-staging --zip-file fileb://lambda-function-package.zip
