@@ -2,57 +2,50 @@ const redisHost = process.env.REDIS_HOST;
 const redisPort = process.env.REDIS_PORT || 6379;
 const redis = require('redis');
 
-let redisClient;
-const commands = {
-  'hset': (key, field, value) => {
-    console.log('beginning hset');
-    redisClient.hset(key, field, value, (err) => {
-      console.log('beginning redisClient.hset callback');
-      if (err) {
-        console.log('first err');
-        throw err;
-      } else {
-        console.log('no err, confirming');
-        // Query for new key to confirm its creation, we may not need this
-        redisClient.hget(key, field, (err, value) => {
-          console.log('in hget confirmation callback');
-          if (err) {
-            console.log('err on hget');
-            throw err;
-          } else {
-            console.log('HSET ' + key + ' ' + field + ' ' + value);
-          }
-        });
-      }
-    });
-    console.log('finishing hset');
-  },
-  'hdel': (key, field) => {
-    redisClient.hdel(key, field, (err) => {
-      if (err) {
-        throw err;
-      } else {
-        // Query for deleted key to confirm its deletion, we may not need this
-        redisClient.hget(key, field, (err, value) => {
-          if (err) {
-            throw err;
-          } else if (value !== 'nil') {
-            throw new Error('Key failed to delete');
-          } else {
-            console.log('HDEL ' + key + ' ' + field);
-          }
-        });
-      }
-    });
-  }
-};
-
-exports.handler = async(event, context) => {
-  console.log(event.Records);
-  redisClient = redis.createClient({
+exports.handler = (event, context) => {
+  const redisClient = redis.createClient({
     host: redisHost,
     port: redisPort
   });
+
+  const commands = {
+    'hset': (key, field, value) => {
+      redisClient.hset(key, field, value, (err) => {
+        if (err) {
+          throw err;
+        } else {
+          // Query for new key to confirm its creation, we may not need this
+          redisClient.hget(key, field, (err, value) => {
+            if (err) {
+              throw err;
+            } else {
+              console.log('HSET ' + key + ' ' + field + ' ' + value);
+            }
+          });
+        }
+      });
+    },
+    'hdel': (key, field) => {
+      redisClient.hdel(key, field, (err) => {
+        if (err) {
+          throw err;
+        } else {
+          // Query for deleted key to confirm its deletion, we may not need this
+          redisClient.hget(key, field, (err, value) => {
+            if (err) {
+              throw err;
+            } else if (value !== 'nil') {
+              throw new Error('Key failed to delete');
+            } else {
+              console.log('HDEL ' + key + ' ' + field);
+            }
+          });
+        }
+      });
+    }
+  };
+
+  console.log('Processing ' + event.Records.length + ' records');
   redisClient.on('error', (err) => {
     console.log('Redis Client Error: ' + err);
   });
@@ -64,7 +57,7 @@ exports.handler = async(event, context) => {
     const field = body.field;
     const value = body.value;
 
-    console.log('command: ' + command +
+    console.log('processing command: ' + command +
                   '\nkey: ' + key +
                   '\nfield: ' + field +
                   '\nvalue: ' + value);
