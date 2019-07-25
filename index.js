@@ -5,13 +5,19 @@ const redis = require('redis');
 let redisClient;
 const commands = {
   'hset': (key, field, value) => {
+    console.log('beginning hset');
     redisClient.hset(key, field, value, (err) => {
+      console.log('beginning redisClient.hset callback');
       if (err) {
+        console.log('first err');
         throw err;
       } else {
+        console.log('no err, confirming');
         // Query for new key to confirm its creation, we may not need this
         redisClient.hget(key, field, (err, value) => {
+          console.log('in hget confirmation callback');
           if (err) {
+            console.log('err on hget');
             throw err;
           } else {
             console.log('HSET ' + key + ' ' + field + ' ' + value);
@@ -19,6 +25,7 @@ const commands = {
         });
       }
     });
+    console.log('finishing hset');
   },
   'hdel': (key, field) => {
     redisClient.hdel(key, field, (err) => {
