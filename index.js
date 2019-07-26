@@ -4,8 +4,8 @@ const redis = require('redis');
 
 exports.handler = (event, context, callback) => {
   /*
-   * Because Redis leaves an open socket, the event loop will always have something in it.
-   * Lets not let that get in our way and cause needless timeouts.
+   * Because Redis leaves an open socket, the event loop will always have
+   * something in it. Lets not let that get in our way and cause timeouts.
    */
   context.callbackWaitsForEmptyEventLoop = false;
 
