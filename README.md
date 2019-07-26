@@ -23,12 +23,12 @@ Update the parameters as appropriate.
 
 ### Updates
 
-Simply (though this will include
+Simply (though this will include *everything* in node_modules, which we don't need)
 
     zip -r lambda-function-package.zip node_modules index.js
     aws lambda update-function-code --function-name redroute --zip-file fileb://lambda-function-package.zip
 
-or use the [`build-and-deploy.sh`](./build-and-deploy.sh) script, which is more likely to include updates:
+or use the [`build-and-deploy.sh`](./build-and-deploy.sh) script, which is more likely to include updates (and only includes required files from node_modules):
 
     ./build-and-deploy staging
     ..
