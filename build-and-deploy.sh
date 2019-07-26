@@ -3,7 +3,14 @@
 [ "$debug" = 'true' ] && set -x
 set -e
 
-FUNCTION_SUFFIX="$1"
+FUNCTION_SUFFIX="${1:-}"
+
+if ! [ "$FUNCTION_SUFFIX" ]
+then
+    echo 'A single positional argument, the function suffix, is required.' >&2
+    exit 2
+fi
+
 ZIPFILE="${TMPDIR:-/tmp/}lambda-function-package-$(date +%s).zip"
 
 npm ci
