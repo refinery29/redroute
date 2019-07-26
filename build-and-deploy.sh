@@ -2,18 +2,19 @@
 set -e
 npm ci
 npm run lint
+ZIPFILE="${TMPDIR:-/tmp/}lambda-function-package-$(date +%s).zip"
 enumerate_package_dependencies () {
-    for package in $(jq -r '.dependencies|keys[]' node_modules/$1/package.json 2>/dev/null)
+    for package in $(jq -r '.dependencies|keys[]' "node_modules/$1/package.json" 2>/dev/null)
     do
         enumerate_package_dependencies "$package"
     done
     echo "$1"
 }
-zip lambda-function-package.zip index.js
+zip "$ZIPFILE" index.js
 
-for package in $(enumerate_package_dependencies $(jq -r '.dependencies| keys[]' package.json))
+for package in $(enumerate_package_dependencies "$(jq -r '.dependencies| keys[]' package.json)")
 do
-    zip -r lambda-function-package.zip node_modules/$package
+    zip -r "$ZIPFILE" "node_modules/$package"
 done
 
-aws lambda update-function-code --function-name redroute-staging --zip-file fileb://lambda-function-package.zip
+aws lambda update-function-code --function-name redroute --zip-file "fileb://$ZIPFILE"
