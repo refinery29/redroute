@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */
 const redisHost = process.env.REDIS_HOST;
 const redisPort = process.env.REDIS_PORT || 6379;
 const redis = require('redis');
