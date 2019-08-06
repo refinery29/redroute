@@ -3,19 +3,6 @@
 [ "$debug" = 'true' ] && set -x
 set -e
 
-FUNCTION_SUFFIX="${1:-}"
-
-if ! [ "$FUNCTION_SUFFIX" ]
-then
-    echo 'A single positional argument, the function suffix, is required.' >&2
-    exit 2
-fi
-
-ZIPFILE="${TMPDIR:-/tmp/}lambda-function-package-$(date +%s).zip"
-
-npm ci
-npm run lint
-
 # From the package provided as an argument, which has been installed into the node_modules directory,
 # recursively get it's dependencies, and their dependencies, and so on, printing the name of each package.
 enumerate_package_dependencies () {
@@ -25,6 +12,19 @@ enumerate_package_dependencies () {
     done
     echo "$1"
 }
+
+FUNCTION_PREFIX="${1:-}"
+
+if ! [ "$FUNCTION_PREFIX" ]
+then
+    echo 'A single positional argument, the function prefix, is required.' >&2
+    exit 2
+fi
+
+ZIPFILE="${TMPDIR:-/tmp/}lambda-function-package-$(date +%s).zip"
+
+npm ci
+npm run lint
 
 zip "$ZIPFILE" index.js
 
