@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */
 const redisHost = process.env.REDIS_HOST;
 const redisPort = process.env.REDIS_PORT || 6379;
 const redis = require('redis');
@@ -65,10 +66,10 @@ exports.handler = (event, context, callback) => {
       const field = body.field;
       const value = body.value;
 
-      console.log('Processing command: ', command)
-      console.log('Key: ', key)
-      console.log('Field: ', field)
-      console.log('Value: ', value)
+      console.log('Processing command: ', command);
+      console.log('Key: ', key);
+      console.log('Field: ', field);
+      console.log('Value: ', value);
 
       // Call delegator function which can handle these early redis commands which share argument order.
       commands[command](key, field, value);
