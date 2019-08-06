@@ -37,4 +37,4 @@ do
     done
 done
 
-aws lambda update-function-code --function-name "redroute-${FUNCTION_SUFFIX}" --zip-file "fileb://$ZIPFILE"
+aws lambda update-function-code --function-name "${FUNCTION_PREFIX}-redroute" --zip-file "fileb://$ZIPFILE"
