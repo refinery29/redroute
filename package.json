@@ -10,7 +10,6 @@
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-r29": "^2.0.0-rc0",
     "eslint-plugin-import": "^2.18.0",
-    "eslint-plugin-jest": "^22.8.0",
     "eslint-plugin-mocha": "^5.3.0",
     "eslint-plugin-react": "^7.14.2"
   },
