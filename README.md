@@ -7,9 +7,9 @@ This Lambda function consumes SQS messages with information necessary to populat
 
 Use the scripts:
 
-    REDROUTE_REDIS_HOST=some-redis-host REDROUTE_REDIS_PORT=56379 ./create-function.sh $(./build-and-deploy.sh some-nonexistant-prefix) the-prefix-you-want
+    REDROUTE_REDIS_HOST=some-redis-host REDROUTE_REDIS_PORT=56379 ./create-function.sh $(./build-and-deploy.sh) some-prefix
 
-With the correct prerequisites, this will create a Lambda function, and an SQS queue, each named *the-prefix-you-want-redroute* and a Lambda event source mapping between the two.
+With the correct prerequisites, this will create a Lambda function, and an SQS queue, each named *some-prefix-redroute* and a Lambda event source mapping between the two.
 
 ### Updates
 

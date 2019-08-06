@@ -19,8 +19,8 @@ FUNCTION_NAME="${REDROUTE_FUNCTION_NAME:-${FUNCTION_PREFIX}${FUNCTION_SUFFIX}}"
 
 if [ "$FUNCTION_NAME" = "$FUNCTION_SUFFIX" ]
 then
-    echo 'A single positional argument, the function prefix, is required, or a REDROUTE_FUNCTION_NAME may be provided as an env var.' >&2
-    exit 2
+    echo 'To enable deploys, a single positional argument, the function prefix, or a REDROUTE_FUNCTION_NAME may be provided as an env var.' >&2
+    DEPLOY=false
 fi
 
 ZIPFILE="${TMPDIR:-/tmp/}lambda-function-package-$(date +%s).zip"
@@ -38,7 +38,7 @@ do
     done
 done
 
-if aws lambda list-functions | jq -r '.Functions[]|.FunctionName' | grep "$FUNCTION_NAME" >/dev/null
+if ! [ "$DEPLOY" = 'false' ] && aws lambda list-functions | jq -r '.Functions[]|.FunctionName' | grep "$FUNCTION_NAME" >/dev/null
 then
     aws lambda update-function-code --function-name "$FUNCTION_NAME" --zip-file "fileb://${ZIPFILE}" >&2
 else
