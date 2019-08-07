@@ -4,18 +4,13 @@ const redisPort = process.env.REDIS_PORT || 6379;
 const redis = require('redis');
 
 exports.handler = (event, context, callback) => {
-  /*
-   * Because Redis leaves an open socket, the event loop will always have
-   * something in it. Lets not let that get in our way and cause timeouts.
-   */
-  context.callbackWaitsForEmptyEventLoop = false;
-
   const redisClient = redis.createClient({
     host: redisHost,
     port: redisPort
   });
 
   redisClient.on('error', (err) => {
+    redisClient.quit();
     callback(new Error(err));
   });
 
@@ -23,15 +18,18 @@ exports.handler = (event, context, callback) => {
     'hset': (key, field, value) => {
       redisClient.hset(key, field, value, (err) => {
         if (err) {
+          redisClient.quit();
           callback(new Error(err));
         }
 
         // Query for new key to confirm its creation, we may not need this
         redisClient.hget(key, field, (err, value) => {
           if (err) {
+            redisClient.quit();
             callback(new Error(err));
           }
 
+          redisClient.quit();
           callback(null, 'HSET SUCCESS ' + key + ' ' + field + ' ' + value);
         });
       });
@@ -39,17 +37,21 @@ exports.handler = (event, context, callback) => {
     'hdel': (key, field) => {
       redisClient.hdel(key, field, (err) => {
         if (err) {
+          redisClient.quit();
           callback(Error(err));
         }
 
         // Query for deleted key to confirm its deletion, we may not need this
         redisClient.hget(key, field, (err, value) => {
           if (err) {
+            redisClient.quit();
             callback(new Error(err));
           } else if (value !== null) {
+            redisClient.quit();
             callback(new Error('Key failed to delete, value was ' + value));
           }
 
+          redisClient.quit();
           callback(null, 'HDEL SUCCESS ' + key + ' ' + field);
         });
       });
@@ -75,8 +77,10 @@ exports.handler = (event, context, callback) => {
       commands[command](key, field, value);
     } catch (err) {
       if (err instanceof TypeError) {
+        redisClient.quit();
         callback(Error('Command Not Found'));
       } else {
+        redisClient.quit();
         callback(Error('Unknown error: ' + err.message));
       }
     }
