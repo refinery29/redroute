@@ -6,7 +6,24 @@ const redis = require('redis');
 exports.handler = (event, context, callback) => {
   const redisClient = redis.createClient({
     host: redisHost,
-    port: redisPort
+    port: redisPort,
+    retry_strategy: (options) => {
+      if (options.error && options.error.code === 'ECONNREFUSED') {
+        // End reconnecting on a specific error and flush all commands with
+        // a individual error
+        return new Error('The server refused the connection');
+      }
+      if (options.error) {
+        return new Error(options.error);
+      }
+      if (options.total_retry_time > 1000 * 7) {
+        // End reconnecting after a specific timeout and flush all commands
+        // with a individual error
+        return new Error('Retry time exhausted');
+      }
+      // reconnect after
+      return Math.min(options.attempt * 100, 1000);
+    }
   });
 
   redisClient.on('error', (err) => {
