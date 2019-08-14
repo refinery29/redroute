@@ -6,7 +6,7 @@ const redis = require('redis');
 exports.handler = (event, context, callback) => {
   const redisClient = redis.createClient({
     host: redisHost,
-    port: redisPort,
+    port: redisPort
   });
 
   redisClient.on('error', (err) => {
