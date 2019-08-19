@@ -5,21 +5,11 @@ This Lambda function consumes SQS messages with information necessary to populat
 
 ### Initial creation
 
-    aws lambda create-function \
-        --function-name redroute-staging \
-        --runtime nodejs10.x \
-        --handler index.handler \
-        --timeout 7 \
-        --vpc-config=SubnetIds=subnet-08851990a6dba2b82,subnet-0b725fe73adf85de4,SecurityGroupIds=sg-0664e80b833f6585d \
-        --environment='Variables={REDIS_HOST=staging-eks-redis-001.tnuvnk.0001.use1.cache.amazonaws.com}' \
-        --tracing-config=Mode=PassThrough \
-        --tags=Environment=Staging \
-        --zip-file fileb://lambda-function-package.zip \
-        --role arn:aws:iam::327361568963:role/lambda-sqs
+Use the scripts:
 
-This will setup the initial lambda function. The SQS queue it will consume from must be created separately and (to my current knowledge) manually added as a trigger to the function.
+    REDROUTE_REDIS_HOST=some-redis-host REDROUTE_REDIS_PORT=56379 ./create-function.sh $(./build-and-deploy.sh) some-prefix
 
-Update the parameters as appropriate.
+With the correct prerequisites, this will create a Lambda function, and an SQS queue, each named *some-prefix-redroute* and a Lambda event source mapping between the two.
 
 ### Updates
 
