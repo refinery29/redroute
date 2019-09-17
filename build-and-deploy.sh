@@ -23,7 +23,7 @@ then
     DEPLOY=false
 fi
 
-ZIPFILE="${TMPDIR:-/tmp/}lambda-function-package-$(date +%s).zip"
+ZIPFILE="${TMPDIR:-/tmp}/lambda-function-package-$(date +%s).zip"
 
 npm ci >&2
 npm run lint >&2
